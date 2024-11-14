@@ -5,6 +5,7 @@ const {
   getCarById,
   updateCar,
   deleteCar,
+  searchCars,
 } = require('../controllers/carController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -15,6 +16,9 @@ router.post('/', protect, createCar);
 
 // Get all cars of the logged-in user
 router.get('/', protect, getCars);
+
+// Route for searching cars
+router.get('/search', protect, searchCars);
 
 // Get a single car by ID
 router.get('/:id', protect, getCarById);

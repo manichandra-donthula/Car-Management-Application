@@ -87,10 +87,35 @@ const deleteCar = async (req, res) => {
   }
 };
 
+// @desc    Search a car by Keyword
+// @route   GET /api/cars//search?keyword=<search-term>
+// @access  Private
+const searchCars = async (req, res) => {
+    try {
+      console.log('Search keyword:', req.query.keyword);
+      const keyword = req.query.keyword
+        ? {
+            $or: [
+              { title: { $regex: req.query.keyword, $options: 'i' } },
+              { description: { $regex: req.query.keyword, $options: 'i' } },
+              { tags: { $regex: req.query.keyword, $options: 'i' } }
+            ]
+          }
+        : {};
+  
+      const cars = await Car.find({ userId: req.user.id, ...keyword });
+  
+      res.status(200).json(cars);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 module.exports = {
   createCar,
   getCars,
   getCarById,
   updateCar,
   deleteCar,
+  searchCars,
 };
