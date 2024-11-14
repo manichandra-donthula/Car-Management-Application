@@ -1,6 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const CarList = () => {
   const { user } = useContext(AuthContext);
@@ -29,8 +30,8 @@ const CarList = () => {
       <ul>
         {cars.map((car) => (
           <li key={car._id}>
-            {car.title}
-            {/* Add links or buttons to view or edit details */}
+            <Link to={`/cars/${car._id}`}>{car.title}</Link> {/* Link to CarDetail */}
+            <Link to={`/cars/edit/${car._id}`}>Edit</Link>  {/* Link to EditCar */}
           </li>
         ))}
       </ul>

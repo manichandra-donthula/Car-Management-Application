@@ -1,11 +1,26 @@
+const multer = require('multer');
+const path = require('path');
 const Car = require('../models/Car');
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // directory where files will be stored
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // add timestamp to file name
+  },
+});
+
+const upload = multer({ storage });
 
 // @desc    Create a new car
 // @route   POST /api/cars
 // @access  Private
 const createCar = async (req, res) => {
   try {
-    const { title, description, tags, images } = req.body;
+    const { title, description, tags } = req.body;
+    const images = req.files ? req.files.map(file => file.path) : []; // Extract image paths
 
     if (images.length > 10) {
       return res.status(400).json({ message: 'You can upload up to 10 images only.' });
@@ -87,28 +102,28 @@ const deleteCar = async (req, res) => {
   }
 };
 
-// @desc    Search a car by Keyword
-// @route   GET /api/cars//search?keyword=<search-term>
+// @desc    Search cars by Keyword
+// @route   GET /api/cars/search?keyword=<search-term>
 // @access  Private
 const searchCars = async (req, res) => {
-    try {
-      console.log('Search keyword:', req.query.keyword);
-      const keyword = req.query.keyword
-        ? {
-            $or: [
-              { title: { $regex: req.query.keyword, $options: 'i' } },
-              { description: { $regex: req.query.keyword, $options: 'i' } },
-              { tags: { $regex: req.query.keyword, $options: 'i' } }
-            ]
-          }
-        : {};
-  
-      const cars = await Car.find({ userId: req.user.id, ...keyword });
-  
-      res.status(200).json(cars);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
+  try {
+    const keyword = req.query.keyword || '';
+    
+    // Build search query
+    const query = {
+      userId: req.user._id,
+      $or: [
+        { title: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } },
+        { tags: { $regex: keyword, $options: 'i' } }
+      ]
+    };
+
+    const cars = await Car.find(query);
+    res.status(200).json(cars);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 };
 
 module.exports = {

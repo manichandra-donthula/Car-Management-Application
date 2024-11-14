@@ -8,11 +8,13 @@ const {
   searchCars,
 } = require('../controllers/carController');
 const { protect } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware'); // import the upload middleware
 
 const router = express.Router();
 
-// Create a car
-router.post('/', protect, createCar);
+// Create a car (with image upload handling)
+// This will allow up to 10 image uploads
+router.post('/', protect, upload.array('images', 10), createCar);
 
 // Get all cars of the logged-in user
 router.get('/', protect, getCars);
