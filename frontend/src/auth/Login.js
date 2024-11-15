@@ -15,14 +15,17 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
+  
     axios
       .post("/api/users/login", { email, password })
       .then((response) => {
         console.log("Login response:", response.data);
         localStorage.setItem("token", response.data.token);
-        login(response.data.user); // This should now have valid user data
-        navigate("/cars");
+        login(response.data.user); // Update context with user data
+  
+        // Redirect to the intended route or default to /cars
+        const redirectPath = location.state?.from?.pathname || "/cars";
+        navigate(redirectPath);
       })
       .catch((err) => {
         setError(err.response ? err.response.data.message : "An error occurred");

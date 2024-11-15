@@ -1,15 +1,22 @@
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
-  console.log("ProtectedRoute - Current user state:", user);
+  const { user, isAuthChecked } = useContext(AuthContext);
+  const location = useLocation();
 
-  if (user === null) {
-    // Prevent redirect until user check is complete
+  console.log("ProtectedRoute - Current user state:", user);
+  console.log("ProtectedRoute - isAuthChecked:", isAuthChecked);
+
+  if (!isAuthChecked) {
+    // Return null or a loading indicator while checking auth state
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
     console.log("ProtectedRoute - Redirecting to login");
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
   return children;

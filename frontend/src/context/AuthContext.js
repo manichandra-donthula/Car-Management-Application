@@ -5,47 +5,42 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false); // Track auth check completion
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token in AuthContext:", token); // Log the token to debug
-
     if (token) {
       axios
         .get("/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          console.log("User data fetched from backend:", response.data); // Check the user data
-          setUser(response.data); // Set user data
+          console.log("AuthContext - User data fetched on refresh:", response.data);
+          setUser(response.data);
         })
         .catch((err) => {
-          console.error("Error fetching user data:", err);
-          localStorage.removeItem("token"); // Clear token if error
-          setUser(null); // Clear user data
+          console.error("AuthContext - Error fetching user data:", err);
+          localStorage.removeItem("token");
+        })
+        .finally(() => {
+          setIsAuthChecked(true); // Set flag after check is complete
         });
     } else {
-      setUser(null); // If no token, clear user state
+      setIsAuthChecked(true); // No token, auth check done
     }
   }, []);
 
   const login = (userData) => {
-    if (userData) {
-      console.log("Logging in with user data:", userData);
-      setUser(userData);
-    } else {
-      console.error("Login function received undefined user data.");
-    }
+    setUser(userData);
   };
 
   const logout = () => {
-    console.log("User logged out");
     setUser(null);
     localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthChecked, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
