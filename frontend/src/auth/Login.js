@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 
 // Set the base URL for all Axios requests
-axios.defaults.baseURL = 'http://localhost:5500';
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 
 const Login = () => {
   const { login } = useContext(AuthContext);
