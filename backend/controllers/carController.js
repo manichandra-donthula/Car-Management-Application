@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const Car = require('../models/Car');
+const Car = require('../models/car');
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
