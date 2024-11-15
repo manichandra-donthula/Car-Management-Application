@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 
 // Set the base URL for all Axios requests
 axios.defaults.baseURL = 'http://localhost:5500';
@@ -12,6 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");  // Capture error messages
   const navigate = useNavigate();
+  const location = useLocation(); // Use useLocation hook to access current location
 
   const handleLogin = (e) => {
     e.preventDefault();
