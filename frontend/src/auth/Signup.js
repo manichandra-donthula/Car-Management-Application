@@ -6,23 +6,24 @@ import { useNavigate } from "react-router-dom";
 // Set the base URL for all Axios requests
 axios.defaults.baseURL = 'http://localhost:5500';
 
-const Login = () => {
+const Signup = () => {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");  // Capture error messages
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
 
+    // Make the API request for user registration
     axios
-      .post("/api/users/login", { email, password })
+      .post("/api/users/signup", { email, password })
       .then((response) => {
-        console.log("Login response:", response.data);
+        // Store the token in localStorage and update the context
         localStorage.setItem("token", response.data.token);
-        login(response.data.user); // This should now have valid user data
-        navigate("/cars");
+        login(response.data.user);
+        navigate("/cars");  // Redirect to cars page or dashboard
       })
       .catch((err) => {
         setError(err.response ? err.response.data.message : "An error occurred");
@@ -30,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleSignup}>
       <input
         type="email"
         value={email}
@@ -45,12 +46,12 @@ const Login = () => {
         placeholder="Password"
         required
       />
-      <button type="submit">Login</button>
-
+      <button type="submit">Sign Up</button>
+      
       {/* Display error message */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </form>
   );
 };
 
-export default Login;
+export default Signup;

@@ -7,6 +7,7 @@ const CarList = () => {
   const { user } = useContext(AuthContext);
   const [cars, setCars] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -14,13 +15,20 @@ const CarList = () => {
         .get(`/api/cars/search?keyword=${searchTerm}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
-        .then((response) => setCars(response.data))
-        .catch((err) => console.error(err));
+        .then((response) => {
+          console.log("Fetched cars:", response.data);
+          setCars(response.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching cars:", err);
+          setError("Failed to load cars. Please try again later.");
+        });
     }
   }, [searchTerm, user]);
 
   return (
     <div>
+      {error && <div>{error}</div>}
       <input
         type="text"
         placeholder="Search Cars"
@@ -30,8 +38,8 @@ const CarList = () => {
       <ul>
         {cars.map((car) => (
           <li key={car._id}>
-            <Link to={`/cars/${car._id}`}>{car.title}</Link> {/* Link to CarDetail */}
-            <Link to={`/cars/edit/${car._id}`}>Edit</Link>  {/* Link to EditCar */}
+            <Link to={`/cars/${car._id}`}>{car.title}</Link>
+            <Link to={`/cars/edit/${car._id}`}>Edit</Link>
           </li>
         ))}
       </ul>

@@ -8,6 +8,7 @@ const EditCar = () => {
   const [car, setCar] = useState({});
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
@@ -15,11 +16,15 @@ const EditCar = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((response) => {
+        console.log("Fetched car data:", response.data);
         setCar(response.data);
         setTitle(response.data.title);
         setDescription(response.data.description);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("Error fetching car data:", err);
+        setError("Failed to load car data for editing.");
+      });
   }, [id]);
 
   const handleSubmit = (e) => {
@@ -37,10 +42,16 @@ const EditCar = () => {
         },
       })
       .then(() => {
+        console.log("Car updated successfully");
         navigate(`/cars/${id}`);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("Error updating car:", err);
+        alert("Failed to update car. Please check the console for details.");
+      });
   };
+
+  if (error) return <div>{error}</div>;
 
   return (
     <form onSubmit={handleSubmit}>

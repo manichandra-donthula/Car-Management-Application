@@ -3,13 +3,14 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const ProductCreation = () => {
+const CreateCar = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [images, setImages] = useState([]);
+  const [error, setError] = useState("");
 
   const handleImageChange = (e) => {
     setImages(e.target.files);
@@ -34,13 +35,18 @@ const ProductCreation = () => {
         },
       })
       .then((response) => {
+        console.log("Car created successfully");
         navigate("/cars");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("Error creating car:", err);
+        setError("Failed to create car. Please try again.");
+      });
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && <div>{error}</div>}
       <input
         type="text"
         placeholder="Car Title"
@@ -68,4 +74,4 @@ const ProductCreation = () => {
   );
 };
 
-export default ProductCreation;
+export default CreateCar;

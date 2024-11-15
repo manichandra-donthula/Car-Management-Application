@@ -1,22 +1,21 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import Login from './auth/Login'; // Login component in auth/ directory
-import CarList from './components/CarList'; // CarList component in components/ directory
-import CarDetail from './components/CarDetail'; // CarDetail component in components/ directory
-import CreateCar from './components/CreateCar'; // CreateCar component in components/ directory
-import EditCar from './components/EditCar'; // EditCar component in components/ directory
-import ProtectedRoute from './auth/ProtectedRoute'; // Protect routes
+import Signup from './auth/Signup'; // Import Signup component
+import Login from './auth/Login';
+import CarList from './components/CarList';
+import CarDetail from './components/CarDetail';
+import CreateCar from './components/CreateCar';
+import EditCar from './components/EditCar';
+import ProtectedRoute from './auth/ProtectedRoute';
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Login Route */}
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-
-          {/* Car Routes */}
           <Route
             path="/cars"
             element={
